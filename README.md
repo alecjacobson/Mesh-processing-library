@@ -6,8 +6,8 @@ I couldn't figure out the Makefile situation on mac. So, instead I wrote a janky
     cmake ../ -DCMAKE_BUILD_TYPE=Release
     make -j8
 
-This should build everything but the GUI executables (those _might_ work on linux).
-
+This should build everything (except GUIs on Mac ; GUIs appear to compile on
+Linux, not tested).
 
 I was mostly interested in the `Subdivfit` program which requires running a few
 of the others first:
