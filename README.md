@@ -1,5 +1,5 @@
 
-I couldn't figure out the Makefile situation on mac.
+I couldn't figure out the Makefile situation on mac. So, instead I wrote a janky cmake build script. Build using:
 
     mkdir build
     cd build
