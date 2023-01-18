@@ -1,3 +1,52 @@
+
+I couldn't figure out the Makefile situation on mac.
+
+    mkdir build
+    cd build
+    cmake ../ -DCMAKE_BUILD_TYPE=Release
+    make -j8
+
+This should build everything but the GUI and Video executables.
+
+
+I was mostly interested in the `Subdivfit` program which requires running a few
+of the others first:
+
+    ./Recon <../demos/data/distcap.pts -samplingd 0.02 | ./Filtermesh -genus -rmcomp 100 -fillholes 30 -triangulate -genus | tee distcap.recon.m
+    ./Meshfit -mfile distcap.recon.m -file ../demos/data/distcap.pts -crep 1e-5 -reconstruct |  tee distcap.opt.m
+    ./Filtermesh distcap.opt.m -angle 52 -mark | ./Subdivfit -mfile - -file ../demos/data/distcap.pts -crep 1e-5 -csharp .2e-5 -reconstruct -outn >distcap.subn.m
+
+Finally, I added some (rather fragile) conversion tools for this `.m` file format 
+
+    ../m_to_obj.py distcap.subn.{m,obj}
+
+Which then I could view using [gp-cli](https://github.com/alecjacobson/gp-cli)'s
+`viewmesh`:
+
+    viewmesh distcap.subn.obj
+
+Here's another example
+
+    ../obj_to_pts.sh ~/Repos/libigl/tutorial/data/cheburashka.obj cheburashka.pts  
+    ./Recon <cheburashka.pts -samplingd 0.02 | ./Filtermesh -genus -rmcomp 100 -fillholes 30 -triangulate -genus | tee cheburashka.recon.m
+    ./Meshfit -mfile cheburashka.recon.m -file cheburashka.pts -crep 1e-5 -reconstruct |  tee cheburashka.opt.m
+    ./Filtermesh cheburashka.opt.m -angle 52 -mark | ./Subdivfit -mfile - -file cheburashka.pts -crep 1e-5 -csharp .2e-5 -reconstruct -outfile cheburashka.sub0.m -outn >cheburashka.subn.m
+    ../m_to_obj.py cheburashka.recon.{m,obj}
+    ../m_to_obj.py cheburashka.opt.{m,obj}
+    ../m_to_obj.py cheburashka.sub0.{m,obj}
+    ../m_to_obj.py cheburashka.subn.{m,obj}
+    scrubmesh cheburashka.{recon,opt,sub0,subn}.obj
+
+I noticed some indeterminacy and memory crashes running `./Subdivfit …`
+
+    Fatal assertion error: assertx(lls.solve(nullptr, &rss1)) in line 795 of file /Users/alecjacobson/Repos/Mesh-processing-library/Subdivfit/Subdivfit.cpp possible error: Inappropriate ioctl for device
+
+Sometimes it helped to run it a few times to see if it will succeed.
+
+
+Original README.md contents below
+-----------------------------------------------------------
+
 # Mesh Processing Library
 
 <!--
