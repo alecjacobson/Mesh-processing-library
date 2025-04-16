@@ -8,9 +8,16 @@ extern "C" {
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>  // struct XWMHints
 #if defined(HH_OGLX)
+#ifdef __APPLE__
+#define GL_GLEXT_PROTOTYPES
+#define GLX_GLXEXT_PROTOTYPES
+#include <OpenGL/gl.h>
+#include <OpenGL/glext.h>
+#else
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glx.h>
+#endif
 #endif
 }
 

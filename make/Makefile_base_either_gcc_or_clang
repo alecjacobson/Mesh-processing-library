@@ -15,8 +15,8 @@ gcc_or_clang = 1
 CXX_STD ?= c++14
 
 # Override the default compilation target to let code run on a greater variety of machines.
-machine_arch = -march=native#  fastest on local machine
-machine_arch = -march=corei7#  to be able to run on more machines, e.g. hhoppeh
+#machine_arch = -march=native#  fastest on local machine
+#machine_arch = -march=corei7#  to be able to run on more machines, e.g. hhoppeh
 
 # For debugging, echo complete compiler commands:
 # ccommon += -v
@@ -31,7 +31,7 @@ ifeq ($(plain_compiler),)
   # -pedantic-errors == -Werror -Wpedantic
   ccommon += $(machine_arch) -ffast-math -mfpmath=sse
   ccommon += $(if $(PEDANTIC:0=),$(cwarnings),)
-  ccommon += $(if $(omit_omp:0=),,-fopenmp)
+  #ccommon += $(if $(omit_omp:0=),,-fopenmp)
   cxxall += -fno-rtti
   cxxwarnings += -Wno-strict-overflow#  even #pragma in Grid.h does not disable this
   commonrel += -O3 -DNDEBUG

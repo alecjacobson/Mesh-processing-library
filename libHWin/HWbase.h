@@ -5,6 +5,8 @@
 #if defined(GL_VERSION)  // OpenGL
 #if defined(_WIN32)
 #include "GL/glext.h"  // possibly use local file because Windows does not come with it.
+#elif defined(__APPLE__)
+#include <OpenGL/glext.h>
 #else                  // Unix
 // #define GL_GLEXT_PROTOTYPES 1 // would obviate need for USE_GL_EXT() except to test presence of extension
 #include <GL/glext.h>
@@ -484,11 +486,12 @@ const string& gl_extensions_string();
 
 #if defined(_WIN32)
 #define USE_GL_EXT_MAYBE(func, type) USE_GL_EXT_MAYBE_AUX(func, type, wglGetProcAddress(#func))
-#elif 1  // Unix / X windows
+#elif defined(__APPLE__)
+#define USE_GL_EXT_MAYBE(func, type) \
+  USE_GL_EXT_MAYBE_AUX(func, type, glGetProcAddress(reinterpret_cast<const GLubyte*>(#func)))
+#else
 #define USE_GL_EXT_MAYBE(func, type) \
   USE_GL_EXT_MAYBE_AUX(func, type, glXGetProcAddress(reinterpret_cast<const GLubyte*>(#func)))
-#else  // Mac OSX
-#define USE_GL_EXT_MAYBE(func, type) USE_GL_EXT_MAYBE_AUX(func, type, NSGLGetProcAddress(#func))
 #endif
 
 // See ~/git/mesh_processing/G3dOGL/glext.h
@@ -569,7 +572,7 @@ inline void HWbase::clear_window_ogl() {
 
 inline void HWbase::draw_text_ogl(const Vec2<int>& yx, const string& s) {
   glListBase(_listbase_font);
-  USE_GL_EXT_MAYBE(glWindowPos2i, PFNGLWINDOWPOS2IPROC);  // not supported on Remote Desktop
+  //USE_GL_EXT_MAYBE(glWindowPos2i, PFNGLWINDOWPOS2IPROC);  // not supported on Remote Desktop
   if (glWindowPos2i) {
     glWindowPos2i(yx[1],
                   _win_dims[0] - yx[0] - _font_dims[0]);  // reverse y; not clip-tested, so raster position valid
